@@ -1,0 +1,2009 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aelaro | Ranked Filing Changelog</title>
+  <meta name="theme-color" content="#05070d" />
+  <link rel="icon" href="/favicon.ico" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #05070d;
+      --panel: rgba(255,255,255,0.055);
+      --panel-2: rgba(255,255,255,0.085);
+      --panel-3: rgba(255,255,255,0.12);
+      --border: rgba(255,255,255,0.13);
+      --border-2: rgba(255,255,255,0.22);
+      --text: #f7f8fb;
+      --muted: rgba(247,248,251,0.67);
+      --muted-2: rgba(247,248,251,0.48);
+      --blue: #80bfff;
+      --cyan: #61f3ff;
+      --green: #8ff0bc;
+      --yellow: #f8d879;
+      --red: #ff8a9a;
+      --purple: #b897ff;
+      --shadow: 0 24px 80px rgba(0,0,0,0.42);
+      --radius-xl: 28px;
+      --radius-lg: 22px;
+      --radius-md: 16px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 15% 5%, rgba(97,243,255,0.16), transparent 30%),
+        radial-gradient(circle at 80% 0%, rgba(184,151,255,0.18), transparent 34%),
+        radial-gradient(circle at 50% 100%, rgba(128,191,255,0.10), transparent 34%),
+        linear-gradient(180deg, #05070d 0%, #07101d 48%, #05070d 100%);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    body.locked {
+      overflow: hidden;
+    }
+
+    button, input {
+      font: inherit;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    .ambient-grid {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.32;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.055) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.055) 1px, transparent 1px);
+      background-size: 54px 54px;
+      mask-image: radial-gradient(circle at center, black, transparent 78%);
+      z-index: -2;
+    }
+
+    .orb {
+      position: fixed;
+      border-radius: 999px;
+      pointer-events: none;
+      filter: blur(44px);
+      opacity: 0.45;
+      z-index: -1;
+      animation: float 10s ease-in-out infinite alternate;
+    }
+
+    .orb.one {
+      width: 340px;
+      height: 340px;
+      top: 16%;
+      left: -120px;
+      background: rgba(97,243,255,0.22);
+    }
+
+    .orb.two {
+      width: 420px;
+      height: 420px;
+      right: -170px;
+      top: 6%;
+      background: rgba(184,151,255,0.18);
+      animation-delay: -3s;
+    }
+
+    .orb.three {
+      width: 280px;
+      height: 280px;
+      left: 35%;
+      bottom: -120px;
+      background: rgba(143,240,188,0.12);
+      animation-delay: -7s;
+    }
+
+    @keyframes float {
+      from { transform: translate3d(0, 0, 0) scale(1); }
+      to { transform: translate3d(36px, -28px, 0) scale(1.08); }
+    }
+
+    .gate {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      background:
+        radial-gradient(circle at 20% 12%, rgba(97,243,255,0.22), transparent 28%),
+        radial-gradient(circle at 80% 12%, rgba(184,151,255,0.22), transparent 28%),
+        rgba(5,7,13,0.88);
+      backdrop-filter: blur(18px);
+      transition: opacity 0.35s ease, transform 0.35s ease;
+    }
+
+    .gate.hidden {
+      opacity: 0;
+      pointer-events: none;
+      transform: scale(1.02);
+    }
+
+    .gate-card {
+      width: min(100%, 560px);
+      padding: 32px;
+      border: 1px solid var(--border-2);
+      border-radius: var(--radius-xl);
+      background: linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.055));
+      box-shadow: var(--shadow);
+      text-align: center;
+    }
+
+    .gate-kicker, .eyebrow, .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 13px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      color: var(--muted);
+      font-size: 13px;
+      background: rgba(255,255,255,0.055);
+    }
+
+    .gate-kicker {
+      margin-bottom: 18px;
+    }
+
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 20px rgba(143,240,188,0.88);
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.45; transform: scale(0.9); }
+      50% { opacity: 1; transform: scale(1.12); }
+    }
+
+    .gate h1 {
+      font-size: clamp(34px, 7vw, 66px);
+      line-height: 0.95;
+      letter-spacing: -0.07em;
+      margin-bottom: 14px;
+    }
+
+    .gate p {
+      color: var(--muted);
+      line-height: 1.65;
+      margin: 0 auto 24px;
+      max-width: 460px;
+    }
+
+    .gate-form {
+      display: flex;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .gate-input {
+      flex: 1;
+      min-width: 0;
+      color: var(--text);
+      background: rgba(0,0,0,0.24);
+      border: 1px solid var(--border-2);
+      border-radius: 999px;
+      outline: none;
+      padding: 14px 16px;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .gate-input:focus {
+      border-color: rgba(97,243,255,0.6);
+      box-shadow: 0 0 0 4px rgba(97,243,255,0.1);
+    }
+
+    .gate-button, .primary-button, .secondary-button, .tiny-button {
+      border: 0;
+      cursor: pointer;
+      color: #041019;
+      background: linear-gradient(135deg, var(--cyan), var(--blue));
+      font-weight: 800;
+      border-radius: 999px;
+      box-shadow: 0 14px 34px rgba(97,243,255,0.18);
+      transition: transform 0.2s ease, filter 0.2s ease, opacity 0.2s ease;
+    }
+
+    .gate-button {
+      padding: 14px 18px;
+    }
+
+    .gate-button:hover, .primary-button:hover, .secondary-button:hover, .tiny-button:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.06);
+    }
+
+    .gate-error {
+      min-height: 22px;
+      color: var(--red);
+      font-size: 13px;
+      margin-top: 12px;
+    }
+
+    .app {
+      width: min(1440px, 100%);
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 16px 0;
+      backdrop-filter: blur(18px);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo {
+      width: 40px;
+      height: 40px;
+      border-radius: 14px;
+      background:
+        radial-gradient(circle at 35% 30%, rgba(255,255,255,0.95), rgba(255,255,255,0.22) 18%, transparent 32%),
+        linear-gradient(135deg, var(--cyan), var(--purple));
+      box-shadow: 0 0 36px rgba(97,243,255,0.28);
+    }
+
+    .brand-title {
+      font-size: 18px;
+      font-weight: 900;
+      letter-spacing: -0.04em;
+    }
+
+    .brand-subtitle {
+      color: var(--muted-2);
+      font-size: 12px;
+      margin-top: 2px;
+    }
+
+    .status-pill {
+      white-space: nowrap;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.08fr) minmax(360px, 0.92fr);
+      gap: 22px;
+      padding: 34px 0 22px;
+      align-items: stretch;
+    }
+
+    .hero-card, .control-card, .result-card, .empty-card, .progress-card, .queue-card {
+      border: 1px solid var(--border);
+      background: linear-gradient(180deg, rgba(255,255,255,0.075), rgba(255,255,255,0.04));
+      box-shadow: var(--shadow);
+      border-radius: var(--radius-xl);
+    }
+
+    .hero-card {
+      position: relative;
+      overflow: hidden;
+      min-height: 520px;
+      padding: clamp(28px, 4vw, 52px);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .hero-card::after {
+      content: "";
+      position: absolute;
+      width: 520px;
+      height: 520px;
+      border-radius: 999px;
+      right: -210px;
+      bottom: -250px;
+      background: radial-gradient(circle, rgba(97,243,255,0.24), transparent 66%);
+      pointer-events: none;
+    }
+
+    .eyebrow {
+      width: fit-content;
+      margin-bottom: 24px;
+    }
+
+    .hero h2 {
+      max-width: 880px;
+      font-size: clamp(44px, 7vw, 88px);
+      line-height: 0.9;
+      letter-spacing: -0.085em;
+      margin-bottom: 22px;
+    }
+
+    .gradient-text {
+      background: linear-gradient(135deg, #fff 10%, var(--cyan) 42%, var(--purple) 76%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .hero-copy {
+      max-width: 760px;
+      color: var(--muted);
+      font-size: clamp(16px, 2vw, 20px);
+      line-height: 1.65;
+    }
+
+    .hero-metrics {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 38px;
+    }
+
+    .metric {
+      padding: 18px;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: rgba(0,0,0,0.18);
+    }
+
+    .metric strong {
+      display: block;
+      font-size: 24px;
+      letter-spacing: -0.05em;
+      margin-bottom: 4px;
+    }
+
+    .metric span {
+      color: var(--muted-2);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .control-card {
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .control-card h3 {
+      font-size: 24px;
+      letter-spacing: -0.055em;
+    }
+
+    .control-card p {
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    .generate-box {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      background:
+        radial-gradient(circle at top right, rgba(97,243,255,0.14), transparent 36%),
+        rgba(0,0,0,0.22);
+      padding: 20px;
+    }
+
+    .date-row {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+      margin: 14px 0;
+    }
+
+    .date-row label {
+      color: var(--muted-2);
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .date-row input {
+      width: 100%;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.065);
+      color: var(--text);
+      border-radius: 14px;
+      padding: 12px 13px;
+      outline: none;
+    }
+
+    .primary-button {
+      width: 100%;
+      padding: 15px 18px;
+      margin-top: 8px;
+    }
+
+    .primary-button:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+      transform: none;
+      filter: none;
+    }
+
+    .secondary-button {
+      color: var(--text);
+      background: rgba(255,255,255,0.08);
+      border: 1px solid var(--border);
+      box-shadow: none;
+      padding: 11px 14px;
+    }
+
+    .tiny-button {
+      color: var(--text);
+      background: rgba(255,255,255,0.08);
+      border: 1px solid var(--border);
+      box-shadow: none;
+      padding: 8px 11px;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .workflow {
+      display: grid;
+      gap: 10px;
+    }
+
+    .step {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      padding: 14px;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: rgba(255,255,255,0.045);
+    }
+
+    .step-number {
+      width: 28px;
+      height: 28px;
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+      border-radius: 10px;
+      background: rgba(97,243,255,0.12);
+      color: var(--cyan);
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .step strong {
+      display: block;
+      margin-bottom: 3px;
+      font-size: 14px;
+    }
+
+    .step span {
+      display: block;
+      color: var(--muted-2);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      justify-content: space-between;
+      margin: 10px 0 16px;
+      flex-wrap: wrap;
+    }
+
+    .toolbar-left {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .toolbar h3 {
+      font-size: 26px;
+      letter-spacing: -0.055em;
+    }
+
+    .toolbar p {
+      color: var(--muted-2);
+      font-size: 13px;
+    }
+
+    .toolbar-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .summary-grid {
+      display: none;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .summary-grid.show {
+      display: grid;
+    }
+
+    .summary-card {
+      padding: 16px;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: rgba(255,255,255,0.045);
+    }
+
+    .summary-card span {
+      color: var(--muted-2);
+      font-size: 12px;
+    }
+
+    .summary-card strong {
+      display: block;
+      font-size: 28px;
+      margin-top: 5px;
+      letter-spacing: -0.05em;
+    }
+
+    .progress-card {
+      display: none;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+
+    .progress-card.show {
+      display: block;
+    }
+
+    .progress-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .progress-head strong {
+      display: block;
+      font-size: 17px;
+      letter-spacing: -0.03em;
+      margin-bottom: 4px;
+    }
+
+    .progress-head span {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .progress-percent {
+      color: var(--cyan);
+      font-weight: 900;
+      font-size: 22px;
+      letter-spacing: -0.05em;
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.08);
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      width: 0%;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--cyan), var(--purple));
+      transition: width 0.25s ease;
+    }
+
+    .progress-log {
+      display: grid;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .log-line {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 9px 10px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: rgba(0,0,0,0.18);
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .log-line strong {
+      color: var(--text);
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .queue-card {
+      display: none;
+      padding: 18px;
+      margin-bottom: 16px;
+    }
+
+    .queue-card.show {
+      display: block;
+    }
+
+    .queue-title {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 12px;
+      align-items: center;
+    }
+
+    .queue-title h4 {
+      font-size: 18px;
+      letter-spacing: -0.04em;
+    }
+
+    .queue-title span {
+      color: var(--muted-2);
+      font-size: 12px;
+    }
+
+    .rank-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .rank-item {
+      display: grid;
+      grid-template-columns: 52px 1fr auto;
+      gap: 10px;
+      align-items: center;
+      padding: 10px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: rgba(0,0,0,0.18);
+    }
+
+    .rank-number {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border-radius: 12px;
+      color: #041019;
+      background: linear-gradient(135deg, var(--cyan), var(--blue));
+      font-weight: 900;
+      font-size: 12px;
+    }
+
+    .rank-main strong {
+      display: block;
+      font-size: 13px;
+    }
+
+    .rank-main span {
+      display: block;
+      margin-top: 3px;
+      color: var(--muted-2);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .rank-score {
+      color: var(--cyan);
+      font-size: 13px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .notice {
+      display: none;
+      margin-bottom: 14px;
+      border: 1px solid rgba(255,138,154,0.22);
+      background: rgba(255,138,154,0.08);
+      color: rgba(255,226,230,0.95);
+      border-radius: 18px;
+      padding: 14px 16px;
+      line-height: 1.55;
+      font-size: 13px;
+    }
+
+    .notice.show {
+      display: block;
+    }
+
+    .results {
+      display: grid;
+      gap: 14px;
+      margin-bottom: 42px;
+    }
+
+    .empty-card {
+      padding: 28px;
+      color: var(--muted);
+      text-align: center;
+      line-height: 1.6;
+    }
+
+    .result-card {
+      overflow: hidden;
+    }
+
+    .result-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 20px;
+      border-bottom: 1px solid var(--border);
+      background:
+        radial-gradient(circle at top right, rgba(97,243,255,0.09), transparent 40%),
+        rgba(255,255,255,0.03);
+    }
+
+    .company-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+
+    .ticker-badge {
+      display: inline-grid;
+      place-items: center;
+      min-width: 58px;
+      height: 38px;
+      padding: 0 10px;
+      border-radius: 13px;
+      color: #041019;
+      background: linear-gradient(135deg, var(--cyan), var(--blue));
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+    }
+
+    .result-title h4 {
+      font-size: 18px;
+      letter-spacing: -0.04em;
+    }
+
+    .result-title p {
+      color: var(--muted-2);
+      font-size: 12px;
+      margin-top: 3px;
+    }
+
+    .score {
+      min-width: 132px;
+      height: fit-content;
+      padding: 10px 12px;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      background: rgba(0,0,0,0.24);
+      text-align: right;
+    }
+
+    .score span {
+      display: block;
+      color: var(--muted-2);
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .score strong {
+      display: block;
+      margin-top: 4px;
+      font-size: 18px;
+    }
+
+    .result-body {
+      padding: 20px;
+      display: grid;
+      gap: 18px;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 10px;
+    }
+
+    .section-title::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--cyan);
+      box-shadow: 0 0 18px rgba(97,243,255,0.7);
+    }
+
+    .plain-text {
+      color: var(--muted);
+      line-height: 1.65;
+      white-space: pre-wrap;
+    }
+
+    .delta-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .delta {
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: rgba(0,0,0,0.2);
+      overflow: hidden;
+    }
+
+    .delta-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 14px 0;
+      margin-bottom: 10px;
+    }
+
+    .delta-section {
+      font-weight: 900;
+      letter-spacing: -0.03em;
+    }
+
+    .materiality {
+      padding: 6px 9px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 11px;
+      white-space: nowrap;
+    }
+
+    .delta-summary {
+      padding: 0 14px 14px;
+      color: var(--muted);
+      line-height: 1.55;
+      font-size: 14px;
+    }
+
+    .excerpt-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      background: var(--border);
+    }
+
+    .excerpt {
+      background: rgba(5,7,13,0.72);
+      padding: 14px;
+    }
+
+    .excerpt label {
+      display: block;
+      color: var(--muted-2);
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 8px;
+    }
+
+    .excerpt p {
+      color: rgba(247,248,251,0.82);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .questions {
+      display: grid;
+      gap: 8px;
+      padding-left: 18px;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .links {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .source-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: rgba(255,255,255,0.055);
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .source-link:hover {
+      border-color: rgba(97,243,255,0.42);
+      background: rgba(97,243,255,0.08);
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 30;
+      display: none;
+      place-items: center;
+      padding: 22px;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(14px);
+    }
+
+    .modal-backdrop.show {
+      display: grid;
+    }
+
+    .modal {
+      width: min(760px, 100%);
+      max-height: 82vh;
+      overflow: auto;
+      border: 1px solid var(--border-2);
+      border-radius: var(--radius-xl);
+      background: linear-gradient(180deg, rgba(17,24,39,0.98), rgba(5,7,13,0.98));
+      box-shadow: var(--shadow);
+      padding: 24px;
+    }
+
+    .modal-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .modal h3 {
+      font-size: 22px;
+      letter-spacing: -0.04em;
+    }
+
+    .modal p {
+      color: var(--muted);
+      line-height: 1.65;
+      margin: 10px 0;
+    }
+
+    .modal ul {
+      color: var(--muted);
+      line-height: 1.65;
+      padding-left: 18px;
+      margin: 10px 0;
+    }
+
+    footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+      color: var(--muted-2);
+      border-top: 1px solid var(--border);
+      padding: 22px 0 34px;
+      font-size: 12px;
+    }
+
+    @media (max-width: 980px) {
+      .hero {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-card {
+        min-height: auto;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .app {
+        padding: 16px;
+      }
+
+      .topbar {
+        align-items: flex-start;
+      }
+
+      .status-pill {
+        display: none;
+      }
+
+      .gate-form {
+        flex-direction: column;
+      }
+
+      .hero-metrics, .summary-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .excerpt-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .result-head {
+        flex-direction: column;
+      }
+
+      .score {
+        text-align: left;
+        width: 100%;
+      }
+
+      .rank-item {
+        grid-template-columns: 42px 1fr;
+      }
+
+      .rank-score {
+        grid-column: 2;
+      }
+    }
+  </style>
+</head>
+
+<body class="locked">
+  <div class="ambient-grid"></div>
+  <div class="orb one"></div>
+  <div class="orb two"></div>
+  <div class="orb three"></div>
+
+  <section class="gate" id="gate" role="dialog" aria-modal="true" aria-labelledby="gateTitle">
+    <div class="gate-card">
+      <div class="gate-kicker">
+        <span class="pulse-dot"></span>
+        Private research preview
+      </div>
+      <h1 id="gateTitle">Aelaro</h1>
+      <p>
+        The ranked filing-change inbox for public-market analysts.
+        Enter the access password to open the workflow.
+      </p>
+      <form class="gate-form" id="gateForm">
+        <input class="gate-input" id="passwordInput" type="password" autocomplete="off" placeholder="Enter password" aria-label="Password" />
+        <button class="gate-button" type="submit">Unlock</button>
+      </form>
+      <div class="gate-error" id="gateError"></div>
+    </div>
+  </section>
+
+  <main class="app">
+    <nav class="topbar">
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <div class="brand-title">Aelaro</div>
+          <div class="brand-subtitle">Ranked filing-change inbox</div>
+        </div>
+      </div>
+
+      <div class="status-pill">
+        <span class="pulse-dot"></span>
+        SEC EDGAR + OpenAI GPT-4.1
+      </div>
+    </nav>
+
+    <section class="hero">
+      <div class="hero-card">
+        <div>
+          <div class="eyebrow">
+            <span class="pulse-dot"></span>
+            Browser-orchestrated full S&P 500 scan
+          </div>
+          <h2>
+            The top filing changes,
+            <span class="gradient-text">without opening every filing.</span>
+          </h2>
+          <p class="hero-copy">
+            Aelaro scans the full S&P 500 filing universe for a selected date, ranks exact-date
+            10-K and 10-Q filings by likely analyst relevance, and generates source-backed
+            changelogs for the top three.
+          </p>
+        </div>
+
+        <div class="hero-metrics">
+          <div class="metric">
+            <strong>Full scan</strong>
+            <span>Browser batches the S&P 500 so the backend does not timeout.</span>
+          </div>
+          <div class="metric">
+            <strong>Top 3</strong>
+            <span>OpenAI only analyzes the highest-signal filings.</span>
+          </div>
+          <div class="metric">
+            <strong>0 advice</strong>
+            <span>No ratings, price targets, buy/sell calls, or predictions.</span>
+          </div>
+        </div>
+      </div>
+
+      <aside class="control-card">
+        <div>
+          <h3>Generate Ranked Changelog</h3>
+          <p>
+            This v8-lite workflow scans the S&P 500 in browser-controlled batches, ranks the filing queue,
+            and analyzes the top three filings with before/after evidence.
+          </p>
+        </div>
+
+        <div class="generate-box">
+          <div class="date-row">
+            <label for="dateInput">Filing date</label>
+            <input id="dateInput" type="date" />
+          </div>
+
+          <button class="primary-button" id="generateButton">
+            Scan S&P 500 + Analyze Top 3
+          </button>
+        </div>
+
+        <div class="workflow">
+          <div class="step">
+            <div class="step-number">01</div>
+            <div>
+              <strong>Scan in batches</strong>
+              <span>The browser calls Vercel in small chunks, avoiding one long serverless request.</span>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-number">02</div>
+            <div>
+              <strong>Rank the filing queue</strong>
+              <span>Metadata and light filing-preview scoring identify the most review-worthy filings.</span>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-number">03</div>
+            <div>
+              <strong>Analyze top 3</strong>
+              <span>OpenAI compares each top filing against its prior comparable filing.</span>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </section>
+
+    <section>
+      <div class="toolbar">
+        <div class="toolbar-left">
+          <h3>Daily ranked changelog</h3>
+          <p id="runMeta">No run yet. Generate a ranked queue to begin.</p>
+        </div>
+
+        <div class="toolbar-actions">
+          <button class="secondary-button" id="sampleButton">Load Sample Output</button>
+          <button class="secondary-button" id="copyButton">Copy JSON</button>
+          <button class="secondary-button" id="aboutButton">About</button>
+          <button class="secondary-button" id="termsButton">Terms</button>
+        </div>
+      </div>
+
+      <div class="notice" id="notice"></div>
+
+      <div class="progress-card" id="progressCard">
+        <div class="progress-head">
+          <div>
+            <strong id="progressTitle">Ready</strong>
+            <span id="progressText">Choose a filing date and start the workflow.</span>
+          </div>
+          <div class="progress-percent" id="progressPercent">0%</div>
+        </div>
+        <div class="progress-track">
+          <div class="progress-bar" id="progressBar"></div>
+        </div>
+        <div class="progress-log" id="progressLog"></div>
+      </div>
+
+      <div class="summary-grid" id="summaryGrid">
+        <div class="summary-card">
+          <span>Companies scanned</span>
+          <strong id="sumScanned">0</strong>
+        </div>
+        <div class="summary-card">
+          <span>Filings found</span>
+          <strong id="sumFound">0</strong>
+        </div>
+        <div class="summary-card">
+          <span>Analyzed</span>
+          <strong id="sumAnalyzed">0</strong>
+        </div>
+        <div class="summary-card">
+          <span>Meaningful changes</span>
+          <strong id="sumMeaningful">0</strong>
+        </div>
+      </div>
+
+      <div class="queue-card" id="queueCard">
+        <div class="queue-title">
+          <div>
+            <h4>Ranked filing queue</h4>
+            <span>Top candidates before OpenAI comparison.</span>
+          </div>
+          <button class="tiny-button" id="copyRankedButton">Copy queue</button>
+        </div>
+        <div class="rank-list" id="rankList"></div>
+      </div>
+
+      <div class="results" id="results">
+        <div class="empty-card">
+          Press <strong>Scan S&P 500 + Analyze Top 3</strong> to build the ranked filing-change inbox.
+          Keep this tab open while the workflow runs.
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <span>© 2026 Niko DiCarlo</span>
+      <span>Aelaro is for research workflow acceleration only. Not investment, legal, tax, or trading advice.</span>
+    </footer>
+  </main>
+
+  <div class="modal-backdrop" id="aboutModal">
+    <div class="modal">
+      <div class="modal-head">
+        <h3>About Aelaro</h3>
+        <button class="tiny-button" data-close="aboutModal">Close</button>
+      </div>
+      <p>
+        Aelaro is a ranked disclosure changelog for public-market analysts. It scans the full S&P 500
+        in browser-orchestrated batches, ranks exact-date 10-K and 10-Q filings by likely analyst relevance,
+        and generates source-backed changelogs for the top three.
+      </p>
+      <p>
+        It does not make investment recommendations, rank securities, issue price targets, or predict returns.
+        It organizes public filing evidence into a clean review queue.
+      </p>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="termsModal">
+    <div class="modal">
+      <div class="modal-head">
+        <h3>Terms of Use</h3>
+        <button class="tiny-button" data-close="termsModal">Close</button>
+      </div>
+      <p><strong>Research use only.</strong> Aelaro provides research workflow support using public filings and AI-generated summaries.</p>
+      <ul>
+        <li>No investment advice, trading recommendations, price targets, or buy/sell signals are provided.</li>
+        <li>Outputs may be incomplete or incorrect. Always verify against original SEC filings.</li>
+        <li>Users are responsible for their own research, compliance review, and decisions.</li>
+        <li>SEC EDGAR source links are provided where available for verification.</li>
+        <li>This v8-lite workflow depends on the browser tab remaining open while the batch scan runs.</li>
+      </ul>
+      <p>© 2026 Niko DiCarlo. All rights reserved.</p>
+    </div>
+  </div>
+
+  <script>
+    const PASSWORD = "tester1218";
+    const BATCH_SIZE = 50;
+    const BATCH_PARALLELISM = 2;
+    const API_TIMEOUT_MS = 420000;
+
+    const gate = document.getElementById("gate");
+    const gateForm = document.getElementById("gateForm");
+    const passwordInput = document.getElementById("passwordInput");
+    const gateError = document.getElementById("gateError");
+
+    const generateButton = document.getElementById("generateButton");
+    const sampleButton = document.getElementById("sampleButton");
+    const copyButton = document.getElementById("copyButton");
+    const copyRankedButton = document.getElementById("copyRankedButton");
+    const dateInput = document.getElementById("dateInput");
+
+    const notice = document.getElementById("notice");
+    const results = document.getElementById("results");
+    const runMeta = document.getElementById("runMeta");
+    const summaryGrid = document.getElementById("summaryGrid");
+    const queueCard = document.getElementById("queueCard");
+    const rankList = document.getElementById("rankList");
+
+    const progressCard = document.getElementById("progressCard");
+    const progressTitle = document.getElementById("progressTitle");
+    const progressText = document.getElementById("progressText");
+    const progressPercent = document.getElementById("progressPercent");
+    const progressBar = document.getElementById("progressBar");
+    const progressLog = document.getElementById("progressLog");
+
+    const sumScanned = document.getElementById("sumScanned");
+    const sumFound = document.getElementById("sumFound");
+    const sumAnalyzed = document.getElementById("sumAnalyzed");
+    const sumMeaningful = document.getElementById("sumMeaningful");
+
+    const aboutButton = document.getElementById("aboutButton");
+    const termsButton = document.getElementById("termsButton");
+
+    let latestPayload = null;
+    let latestRankedQueue = [];
+    let isRunning = false;
+
+    function getTodayISO() {
+      const now = new Date();
+      const local = new Date(now.getTime() - now.getTimezoneOffset() * 60000);
+      return local.toISOString().slice(0, 10);
+    }
+
+    dateInput.value = getTodayISO();
+
+    function unlock() {
+      gate.classList.add("hidden");
+      document.body.classList.remove("locked");
+      try {
+        sessionStorage.setItem("aelaro_unlocked", "true");
+      } catch {}
+    }
+
+    try {
+      if (sessionStorage.getItem("aelaro_unlocked") === "true") {
+        unlock();
+      }
+    } catch {}
+
+    gateForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      if (passwordInput.value === PASSWORD) {
+        unlock();
+      } else {
+        gateError.textContent = "Incorrect password.";
+        passwordInput.value = "";
+        passwordInput.focus();
+      }
+    });
+
+    aboutButton.addEventListener("click", () => {
+      document.getElementById("aboutModal").classList.add("show");
+    });
+
+    termsButton.addEventListener("click", () => {
+      document.getElementById("termsModal").classList.add("show");
+    });
+
+    document.querySelectorAll("[data-close]").forEach((button) => {
+      button.addEventListener("click", () => {
+        document.getElementById(button.dataset.close).classList.remove("show");
+      });
+    });
+
+    document.querySelectorAll(".modal-backdrop").forEach((modal) => {
+      modal.addEventListener("click", (event) => {
+        if (event.target === modal) modal.classList.remove("show");
+      });
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") {
+        document.querySelectorAll(".modal-backdrop").forEach((modal) => modal.classList.remove("show"));
+      }
+    });
+
+    function escapeHTML(value) {
+      return String(value ?? "").replace(/[&<>"']/g, (char) => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+      })[char]);
+    }
+
+    function showNotice(message, isError = false) {
+      notice.textContent = message || "";
+      notice.classList.toggle("show", Boolean(message));
+      notice.style.borderColor = isError ? "rgba(255,138,154,0.28)" : "rgba(97,243,255,0.22)";
+      notice.style.background = isError ? "rgba(255,138,154,0.08)" : "rgba(97,243,255,0.08)";
+      notice.style.color = isError ? "rgba(255,226,230,0.95)" : "rgba(224,252,255,0.95)";
+    }
+
+    function normalizeArray(value) {
+      return Array.isArray(value) ? value : [];
+    }
+
+    function setRunning(running) {
+      isRunning = running;
+      generateButton.disabled = running;
+      generateButton.textContent = running ? "Workflow running…" : "Scan S&P 500 + Analyze Top 3";
+    }
+
+    function setProgress(percent, title, text) {
+      const safePercent = Math.max(0, Math.min(100, Math.round(percent)));
+      progressCard.classList.add("show");
+      progressPercent.textContent = `${safePercent}%`;
+      progressBar.style.width = `${safePercent}%`;
+      progressTitle.textContent = title;
+      progressText.textContent = text;
+    }
+
+    function addLog(label, value) {
+      const line = document.createElement("div");
+      line.className = "log-line";
+      line.innerHTML = `<span>${escapeHTML(label)}</span><strong>${escapeHTML(value)}</strong>`;
+      progressLog.prepend(line);
+
+      while (progressLog.children.length > 8) {
+        progressLog.removeChild(progressLog.lastChild);
+      }
+    }
+
+    function resetRunUI() {
+      latestPayload = null;
+      latestRankedQueue = [];
+      progressLog.innerHTML = "";
+      queueCard.classList.remove("show");
+      rankList.innerHTML = "";
+      summaryGrid.classList.add("show");
+      sumScanned.textContent = "0";
+      sumFound.textContent = "0";
+      sumAnalyzed.textContent = "0";
+      sumMeaningful.textContent = "0";
+      showNotice("");
+      results.innerHTML = `
+        <div class="empty-card">
+          Building ranked filing queue. Keep this tab open while Aelaro scans the S&P 500.
+        </div>
+      `;
+    }
+
+    async function callApi(payload, timeoutMs = API_TIMEOUT_MS) {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), timeoutMs);
+
+      try {
+        const response = await fetch("/api/ask", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+          signal: controller.signal
+        });
+
+        const data = await response.json().catch(() => null);
+
+        if (!response.ok) {
+          throw new Error(data?.error || data?.detail || `Server error ${response.status}`);
+        }
+
+        return data;
+      } finally {
+        clearTimeout(timeout);
+      }
+    }
+
+    function chunkArray(array, size) {
+      const chunks = [];
+      for (let i = 0; i < array.length; i += size) {
+        chunks.push(array.slice(i, i + size));
+      }
+      return chunks;
+    }
+
+    async function runLimited(items, limit, worker) {
+      const results = new Array(items.length);
+      let index = 0;
+
+      async function next() {
+        while (index < items.length) {
+          const currentIndex = index++;
+          results[currentIndex] = await worker(items[currentIndex], currentIndex);
+        }
+      }
+
+      const workers = Array.from({ length: Math.min(limit, items.length) }, () => next());
+      await Promise.all(workers);
+      return results;
+    }
+
+    function persistProgress(state) {
+      try {
+        localStorage.setItem("aelaro_v8_lite_last_run", JSON.stringify({
+          ...state,
+          savedAt: new Date().toISOString()
+        }));
+      } catch {}
+    }
+
+    function renderRankedQueue(rankedFilings) {
+      latestRankedQueue = normalizeArray(rankedFilings);
+      queueCard.classList.toggle("show", latestRankedQueue.length > 0);
+
+      rankList.innerHTML = latestRankedQueue.slice(0, 10).map((filing, index) => {
+        const reasons = normalizeArray(filing.importanceReasons).slice(0, 5).join(", ") || "metadata signal";
+        return `
+          <div class="rank-item">
+            <div class="rank-number">#${index + 1}</div>
+            <div class="rank-main">
+              <strong>${escapeHTML(filing.ticker || "—")} · ${escapeHTML(filing.companyName || "Unknown")}</strong>
+              <span>${escapeHTML(filing.form || "Filing")} filed ${escapeHTML(filing.filingDate || "")} · ${escapeHTML(reasons)}</span>
+            </div>
+            <div class="rank-score">${escapeHTML(filing.importanceScore ?? 0)} pts</div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function renderPayload(payload) {
+      latestPayload = payload;
+      const items = normalizeArray(payload.items);
+      const summary = payload.summary || {};
+
+      runMeta.textContent = payload.generatedAt
+        ? `Generated ${new Date(payload.generatedAt).toLocaleString()} for filing date ${payload.filingDate || "today"}.`
+        : `Generated for filing date ${payload.filingDate || "today"}.`;
+
+      summaryGrid.classList.add("show");
+      sumScanned.textContent = summary.companiesScanned ?? summary.scannedCompanies ?? 0;
+      sumFound.textContent = summary.filingsFound ?? 0;
+      sumAnalyzed.textContent = summary.filingsAnalyzed ?? items.length ?? 0;
+      sumMeaningful.textContent = summary.meaningfulChanges ?? items.filter((i) => normalizeArray(i.changes).length).length;
+
+      if (payload.notice) {
+        showNotice(payload.notice, false);
+      } else {
+        showNotice("");
+      }
+
+      if (!items.length) {
+        results.innerHTML = `
+          <div class="empty-card">
+            No top filings were analyzed. Try another filing date or review the ranked queue.
+          </div>
+        `;
+        return;
+      }
+
+      results.innerHTML = items.map((item) => renderResultCard(item)).join("");
+    }
+
+    function renderResultCard(item) {
+      const changes = normalizeArray(item.changes);
+      const questions = normalizeArray(item.analystQuestions);
+      const sourceLinks = normalizeArray(item.sources);
+      const reasons = normalizeArray(item.importanceReasons).slice(0, 5).join(", ");
+
+      return `
+        <article class="result-card">
+          <div class="result-head">
+            <div class="result-title">
+              <div class="company-row">
+                <div class="ticker-badge">${escapeHTML(item.ticker || "—")}</div>
+                <div>
+                  <h4>${escapeHTML(item.companyName || "Unknown company")}</h4>
+                  <p>${escapeHTML(item.form || "Filing")} filed ${escapeHTML(item.filingDate || "")} · Prior comparable: ${escapeHTML(item.priorForm || "—")} ${escapeHTML(item.priorFilingDate || "")}</p>
+                  ${reasons ? `<p>Rank reasons: ${escapeHTML(reasons)}</p>` : ""}
+                </div>
+              </div>
+            </div>
+            <div class="score">
+              <span>Review priority</span>
+              <strong>${escapeHTML(item.reviewPriority || "Medium")}</strong>
+            </div>
+          </div>
+
+          <div class="result-body">
+            <section>
+              <div class="section-title">Why it may matter</div>
+              <div class="plain-text">${escapeHTML(item.executiveSummary || "No summary returned.")}</div>
+            </section>
+
+            <section>
+              <div class="section-title">Changed disclosure sections</div>
+              <div class="delta-list">
+                ${
+                  changes.length
+                    ? changes.map((change) => renderChange(change)).join("")
+                    : `<div class="plain-text">No meaningful non-routine changes detected by the model.</div>`
+                }
+              </div>
+            </section>
+
+            <section>
+              <div class="section-title">Analyst review questions</div>
+              ${
+                questions.length
+                  ? `<ol class="questions">${questions.map((q) => `<li>${escapeHTML(q)}</li>`).join("")}</ol>`
+                  : `<div class="plain-text">No review questions returned.</div>`
+              }
+            </section>
+
+            <section>
+              <div class="section-title">Sources</div>
+              <div class="links">
+                ${
+                  sourceLinks.length
+                    ? sourceLinks.map((link) => `
+                      <a class="source-link" href="${escapeHTML(link.url)}" target="_blank" rel="noopener noreferrer">
+                        ${escapeHTML(link.label || "Source")} ↗
+                      </a>
+                    `).join("")
+                    : `<span class="plain-text">Source links unavailable.</span>`
+                }
+              </div>
+            </section>
+          </div>
+        </article>
+      `;
+    }
+
+    function renderChange(change) {
+      return `
+        <div class="delta">
+          <div class="delta-top">
+            <div class="delta-section">${escapeHTML(change.section || "Disclosure section")}</div>
+            <div class="materiality">${escapeHTML(change.materiality || "Review")}</div>
+          </div>
+          <div class="delta-summary">${escapeHTML(change.summary || "")}</div>
+          <div class="excerpt-grid">
+            <div class="excerpt">
+              <label>Before</label>
+              <p>${escapeHTML(change.beforeExcerpt || "Not available.")}</p>
+            </div>
+            <div class="excerpt">
+              <label>After</label>
+              <p>${escapeHTML(change.afterExcerpt || "Not available.")}</p>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    async function generateV8Lite() {
+      if (isRunning) return;
+
+      const filingDate = dateInput.value || getTodayISO();
+
+      setRunning(true);
+      resetRunUI();
+      setProgress(2, "Loading S&P 500 universe", "Fetching current S&P 500 constituents and SEC CIK mapping.");
+      addLog("Started", filingDate);
+
+      try {
+        const universePayload = await callApi({ action: "getUniverse" }, 60000);
+        const companies = normalizeArray(universePayload.companies);
+
+        if (!companies.length) {
+          throw new Error("No S&P 500 companies returned by backend.");
+        }
+
+        addLog("Universe loaded", `${companies.length} companies`);
+        sumScanned.textContent = "0";
+        setProgress(8, "Scanning S&P 500 in batches", `Loaded ${companies.length} companies. Starting exact-date scan.`);
+
+        const batches = chunkArray(companies, BATCH_SIZE);
+        const allFilings = [];
+        let scannedCompanies = 0;
+        let scanErrors = 0;
+
+        await runLimited(batches, BATCH_PARALLELISM, async (batch, batchIndex) => {
+          const payload = await callApi({
+            action: "scanBatch",
+            filingDate,
+            companies: batch
+          }, 70000);
+
+          const filings = normalizeArray(payload.filings);
+          allFilings.push(...filings);
+          scannedCompanies += payload.scannedCompanies || batch.length;
+          scanErrors += payload.scanErrors || 0;
+
+          const scanPercent = 8 + (Math.min(scannedCompanies, companies.length) / companies.length) * 58;
+          setProgress(
+            scanPercent,
+            "Scanning S&P 500 in batches",
+            `Scanned ${scannedCompanies} / ${companies.length} companies. Found ${allFilings.length} exact-date 10-K / 10-Q filings.`
+          );
+
+          sumScanned.textContent = scannedCompanies;
+          sumFound.textContent = allFilings.length;
+          addLog(`Batch ${batchIndex + 1}/${batches.length}`, `${filings.length} filings found`);
+
+          persistProgress({
+            status: "scanning",
+            filingDate,
+            scannedCompanies,
+            filingsFound: allFilings.length
+          });
+        });
+
+        addLog("Scan complete", `${allFilings.length} filings found`);
+        sumScanned.textContent = scannedCompanies;
+        sumFound.textContent = allFilings.length;
+
+        if (!allFilings.length) {
+          const emptyPayload = {
+            product: "Aelaro",
+            version: "v8-lite",
+            generatedAt: new Date().toISOString(),
+            filingDate,
+            notice: `No exact-date S&P 500 10-K or 10-Q filings were found for ${filingDate}.`,
+            summary: {
+              companiesScanned: scannedCompanies,
+              filingsFound: 0,
+              filingsAnalyzed: 0,
+              meaningfulChanges: 0,
+              scanErrors
+            },
+            items: []
+          };
+
+          setProgress(100, "No filings found", "The full S&P 500 scan completed with no exact-date 10-K / 10-Q matches.");
+          renderPayload(emptyPayload);
+          return;
+        }
+
+        setProgress(72, "Ranking filing queue", `Ranking ${allFilings.length} filings by likely analyst relevance.`);
+        addLog("Ranking", `${allFilings.length} candidates`);
+
+        const rankingPayload = await callApi({
+          action: "rankFilings",
+          filingDate,
+          filings: allFilings
+        }, 120000);
+
+        const rankedFilings = normalizeArray(rankingPayload.rankedFilings);
+        renderRankedQueue(rankedFilings);
+
+        const topFilings = rankedFilings.slice(0, 3);
+
+        if (!topFilings.length) {
+          throw new Error("Ranking returned no top filings.");
+        }
+
+        setProgress(84, "Analyzing top 3 filings", `Calling OpenAI only for the top ${topFilings.length} ranked filings.`);
+        addLog("Top selected", topFilings.map((f) => f.ticker).join(", "));
+
+        const analysisPayload = await callApi({
+          action: "analyzeTop",
+          filingDate,
+          filings: topFilings,
+          scanSummary: {
+            companiesScanned: scannedCompanies,
+            filingsFound: allFilings.length,
+            scanErrors
+          }
+        }, API_TIMEOUT_MS);
+
+        setProgress(100, "Complete", `Generated ${normalizeArray(analysisPayload.items).length} source-backed changelog cards.`);
+        addLog("Complete", `${normalizeArray(analysisPayload.items).length} analyzed`);
+
+        renderPayload({
+          ...analysisPayload,
+          rankedFilings: rankedFilings.slice(0, 10)
+        });
+
+        persistProgress({
+          status: "complete",
+          filingDate,
+          scannedCompanies,
+          filingsFound: allFilings.length,
+          analyzed: normalizeArray(analysisPayload.items).length
+        });
+      } catch (error) {
+        console.error(error);
+        setProgress(100, "Workflow stopped", error.message || "Something went wrong.");
+        showNotice(error.message || "Something went wrong while generating the ranked changelog.", true);
+        results.innerHTML = `
+          <div class="empty-card">
+            The workflow stopped before completion. You can retry the same date. Partial progress may appear in the progress log.
+          </div>
+        `;
+      } finally {
+        setRunning(false);
+      }
+    }
+
+    generateButton.addEventListener("click", generateV8Lite);
+
+    sampleButton.addEventListener("click", () => {
+      renderRankedQueue([
+        {
+          ticker: "ABNB",
+          companyName: "Airbnb, Inc.",
+          form: "10-Q",
+          filingDate: dateInput.value || getTodayISO(),
+          importanceScore: 215,
+          importanceReasons: ["senior notes", "interest rate swaps", "cash flow hedging"]
+        },
+        {
+          ticker: "AES",
+          companyName: "AES CORP",
+          form: "10-Q",
+          filingDate: dateInput.value || getTodayISO(),
+          importanceScore: 190,
+          importanceReasons: ["merger agreement", "credit agreement", "noncontrolling interest"]
+        },
+        {
+          ticker: "ABBV",
+          companyName: "AbbVie Inc.",
+          form: "10-Q",
+          filingDate: dateInput.value || getTodayISO(),
+          importanceScore: 176,
+          importanceReasons: ["license agreement", "upfront payment", "milestone payment"]
+        }
+      ]);
+
+      setProgress(100, "Sample loaded", "This demonstrates the v8-lite ranked workflow UI without calling SEC EDGAR or OpenAI.");
+      summaryGrid.classList.add("show");
+
+      renderPayload({
+        product: "Aelaro",
+        version: "v8-lite-sample",
+        generatedAt: new Date().toISOString(),
+        filingDate: dateInput.value || getTodayISO(),
+        notice: "Sample output loaded. This demonstrates the Aelaro v8-lite UI without calling SEC EDGAR or OpenAI.",
+        summary: {
+          companiesScanned: 503,
+          filingsFound: 49,
+          filingsAnalyzed: 3,
+          meaningfulChanges: 3,
+          scanErrors: 0
+        },
+        items: [
+          {
+            ticker: "ABNB",
+            companyName: "Airbnb, Inc.",
+            form: "10-Q",
+            filingDate: dateInput.value || getTodayISO(),
+            priorForm: "10-Q",
+            priorFilingDate: "Prior quarter",
+            reviewPriority: "High",
+            executiveSummary: "Airbnb’s filing contains new financing and hedging disclosures, including senior notes and interest-rate swaps. This is a research triage summary, not investment advice.",
+            importanceReasons: ["senior notes", "interest rate swaps", "cash flow hedging"],
+            changes: [
+              {
+                section: "Debt and Financing",
+                materiality: "High",
+                summary: "New unsecured senior notes were disclosed.",
+                beforeExcerpt: "No comparable senior notes disclosure in the prior filing.",
+                afterExcerpt: "The company disclosed $2.5 billion aggregate principal amount of unsecured senior notes."
+              },
+              {
+                section: "Market Risk / Hedging",
+                materiality: "High",
+                summary: "New interest-rate swap activity was disclosed in connection with the notes.",
+                beforeExcerpt: "No comparable interest-rate swap disclosure.",
+                afterExcerpt: "The company entered into interest rate swap agreements with an aggregate notional amount of approximately $1.7 billion."
+              }
+            ],
+            analystQuestions: [
+              "What are the intended uses of proceeds for the senior notes?",
+              "How do the interest-rate swaps alter interest expense sensitivity?",
+              "Does the new hedging program change reported risk exposure?"
+            ],
+            sources: [
+              { label: "Current filing", url: "https://www.sec.gov/edgar/search/" },
+              { label: "Prior filing", url: "https://www.sec.gov/edgar/search/" }
+            ]
+          },
+          {
+            ticker: "AES",
+            companyName: "AES CORP",
+            form: "10-Q",
+            filingDate: dateInput.value || getTodayISO(),
+            priorForm: "10-Q",
+            priorFilingDate: "Prior quarter",
+            reviewPriority: "High",
+            executiveSummary: "AES disclosed new strategic transaction and financing-related items that may deserve analyst review. This is a research triage summary only.",
+            importanceReasons: ["merger agreement", "credit agreement", "noncontrolling interest"],
+            changes: [
+              {
+                section: "M&A / Strategic Transactions",
+                materiality: "High",
+                summary: "A merger agreement was newly referenced.",
+                beforeExcerpt: "No comparable merger agreement disclosure.",
+                afterExcerpt: "Agreement and Plan of Merger was incorporated by reference."
+              }
+            ],
+            analystQuestions: [
+              "What are the transaction terms and closing conditions?",
+              "How do the financing amendments affect liquidity?",
+              "What segment exposure changes from the NCI transactions?"
+            ],
+            sources: [
+              { label: "Current filing", url: "https://www.sec.gov/edgar/search/" },
+              { label: "Prior filing", url: "https://www.sec.gov/edgar/search/" }
+            ]
+          },
+          {
+            ticker: "ABBV",
+            companyName: "AbbVie Inc.",
+            form: "10-Q",
+            filingDate: dateInput.value || getTodayISO(),
+            priorForm: "10-Q",
+            priorFilingDate: "Prior quarter",
+            reviewPriority: "High",
+            executiveSummary: "AbbVie disclosed a major license agreement involving upfront and potential milestone payments. This is a research triage summary only.",
+            importanceReasons: ["license agreement", "upfront payment", "milestone payment"],
+            changes: [
+              {
+                section: "Licensing / Pipeline / R&D",
+                materiality: "High",
+                summary: "New license agreement with significant upfront and milestone economics.",
+                beforeExcerpt: "No mention of the license agreement.",
+                afterExcerpt: "The company disclosed an upfront payment and potential future milestone payments."
+              }
+            ],
+            analystQuestions: [
+              "What pipeline assets are affected by the agreement?",
+              "What are the timing and likelihood of milestone payments?",
+              "How does the agreement affect near-term IPR&D expense?"
+            ],
+            sources: [
+              { label: "Current filing", url: "https://www.sec.gov/edgar/search/" },
+              { label: "Prior filing", url: "https://www.sec.gov/edgar/search/" }
+            ]
+          }
+        ]
+      });
+    });
+
+    copyButton.addEventListener("click", async () => {
+      if (!latestPayload) {
+        showNotice("Nothing to copy yet. Generate or load a queue first.", true);
+        return;
+      }
+
+      try {
+        await navigator.clipboard.writeText(JSON.stringify(latestPayload, null, 2));
+        showNotice("Copied latest changelog JSON to clipboard.");
+      } catch {
+        showNotice("Clipboard copy failed in this browser.", true);
+      }
+    });
+
+    copyRankedButton.addEventListener("click", async () => {
+      if (!latestRankedQueue.length) {
+        showNotice("No ranked queue to copy yet.", true);
+        return;
+      }
+
+      try {
+        await navigator.clipboard.writeText(JSON.stringify(latestRankedQueue, null, 2));
+        showNotice("Copied ranked filing queue to clipboard.");
+      } catch {
+        showNotice("Clipboard copy failed in this browser.", true);
+      }
+    });
+  </script>
+</body>
+</html>
