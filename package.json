@@ -1,0 +1,13 @@
+{
+  "name": "aelaro-v8-lite",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Aelaro v8-lite: browser-orchestrated full S&P 500 SEC filing scan with ranked top-3 AI changelogs.",
+  "dependencies": {
+    "openai": "^4.104.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
