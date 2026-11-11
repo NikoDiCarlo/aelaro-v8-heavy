@@ -1,4 +1,4 @@
-# Aelaro
+# Aelaro (Discontinued)
 
 ### A ranked SEC filing changelog for public-market analysts
 
